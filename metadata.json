@@ -1,0 +1,7 @@
+{
+  "name": "PantryPal: House Rations & Smart Fridge Stocking",
+  "description": "Merchandising and inventory app for house rations and fridge stocking with barcode and receipt OCR scanning, global recipe generator with automatic inventory deductions, shopping list with local store auto-delivery, store locator map, and payment gateways.",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
