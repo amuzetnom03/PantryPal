@@ -252,9 +252,9 @@ export default function InventoryView({ items, setItems, addToShoppingList, setA
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-500 font-medium">Expires:</span>
                   <span className={`px-2 py-0.5 rounded-full font-semibold ${
-                    isExpired ? 'bg-rose-100 text-rose-700' : isExpiringSoon ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                    !mounted ? 'bg-slate-100 text-slate-700' : isExpired ? 'bg-rose-100 text-rose-700' : isExpiringSoon ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
                   }`}>
-                    {isExpired ? 'Expired' : `${daysLeft} days left (${item.expiryDate})`}
+                    {!mounted ? item.expiryDate : isExpired ? 'Expired' : `${daysLeft} days left (${item.expiryDate})`}
                   </span>
                 </div>
 
