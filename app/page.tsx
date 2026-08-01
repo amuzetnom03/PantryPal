@@ -75,28 +75,11 @@ const INITIAL_STORES: GroceryStore[] = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('inventory');
-  const [inventory, setInventory] = useState<InventoryItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('pantrypal_inventory');
-      if (saved) {
-        try { return JSON.parse(saved); } catch (e) { /* fallback */ }
-      }
-    }
-    return INITIAL_INVENTORY;
-  });
-
-  const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('pantrypal_shopping');
-      if (saved) {
-        try { return JSON.parse(saved); } catch (e) { /* fallback */ }
-      }
-    }
-    return [
-      { id: 'shop-1', name: 'Greek Yogurt', quantity: 2, unit: 'tub', estimatedPrice: 4.20, storeId: 'store-2', checked: false },
-      { id: 'shop-2', name: 'Organic Whole Milk', quantity: 1, unit: 'gallon', estimatedPrice: 4.99, storeId: 'store-1', checked: false }
-    ];
-  });
+  const [inventory, setInventory] = useState<InventoryItem[]>(INITIAL_INVENTORY);
+  const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([
+    { id: 'shop-1', name: 'Greek Yogurt', quantity: 2, unit: 'tub', estimatedPrice: 4.20, storeId: 'store-2', checked: false },
+    { id: 'shop-2', name: 'Organic Whole Milk', quantity: 1, unit: 'gallon', estimatedPrice: 4.99, storeId: 'store-1', checked: false }
+  ]);
 
   const [stores, setStores] = useState<GroceryStore[]>(INITIAL_STORES);
   const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>({
@@ -112,26 +95,37 @@ export default function Home() {
     testMode: true
   });
   const [orders, setOrders] = useState<OrderRecord[]>([]);
-  const [showOnboarding, setShowOnboarding] = useState(() => {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
     if (typeof window !== 'undefined') {
-      return !localStorage.getItem('pantrypal_onboarded');
+      const savedInv = localStorage.getItem('pantrypal_inventory');
+      if (savedInv) {
+        try { setInventory(JSON.parse(savedInv)); } catch (e) {}
+      }
+      const savedShop = localStorage.getItem('pantrypal_shopping');
+      if (savedShop) {
+        try { setShoppingList(JSON.parse(savedShop)); } catch (e) {}
+      }
+      if (!localStorage.getItem('pantrypal_onboarded')) {
+        setShowOnboarding(true);
+      }
     }
-    return false;
-  });
+  }, []);
 
   useEffect(() => {
-    if (!showOnboarding && typeof window !== 'undefined') {
-      localStorage.setItem('pantrypal_onboarded', 'true');
+    if (mounted) {
+      localStorage.setItem('pantrypal_inventory', JSON.stringify(inventory));
     }
-  }, [showOnboarding]);
+  }, [inventory, mounted]);
 
   useEffect(() => {
-    localStorage.setItem('pantrypal_inventory', JSON.stringify(inventory));
-  }, [inventory]);
-
-  useEffect(() => {
-    localStorage.setItem('pantrypal_shopping', JSON.stringify(shoppingList));
-  }, [shoppingList]);
+    if (mounted) {
+      localStorage.setItem('pantrypal_shopping', JSON.stringify(shoppingList));
+    }
+  }, [shoppingList, mounted]);
 
   const addToShoppingList = (item: InventoryItem) => {
     const existing = shoppingList.find(s => s.name.toLowerCase() === item.name.toLowerCase());
