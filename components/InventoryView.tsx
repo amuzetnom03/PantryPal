@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InventoryItem, Category } from '@/app/types';
 import { Plus, Search, AlertTriangle, Trash2, Edit3, ShoppingCart, RefreshCw, CheckCircle2 } from 'lucide-react';
 
@@ -18,6 +18,11 @@ export default function InventoryView({ items, setItems, addToShoppingList, setA
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [isAdding, setIsAdding] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
+  }, []);
 
   // Form state for new/edit item
   const [formData, setFormData] = useState({
@@ -149,13 +154,13 @@ export default function InventoryView({ items, setItems, addToShoppingList, setA
           </div>
           <div className="bg-emerald-900/40 backdrop-blur-xs rounded-xl p-3 border border-emerald-500/20">
             <div className="text-2xl font-bold text-amber-300">
-              {items.filter(i => getDaysUntilExpiry(i.expiryDate) <= 3 && getDaysUntilExpiry(i.expiryDate) >= 0).length}
+              {mounted ? items.filter(i => getDaysUntilExpiry(i.expiryDate) <= 3 && getDaysUntilExpiry(i.expiryDate) >= 0).length : 0}
             </div>
             <div className="text-xs text-emerald-200">Expiring in 3 Days</div>
           </div>
           <div className="bg-emerald-900/40 backdrop-blur-xs rounded-xl p-3 border border-emerald-500/20">
             <div className="text-2xl font-bold text-rose-300">
-              {items.filter(i => getDaysUntilExpiry(i.expiryDate) < 0 || i.quantity <= i.minThreshold).length}
+              {mounted ? items.filter(i => getDaysUntilExpiry(i.expiryDate) < 0 || i.quantity <= i.minThreshold).length : 0}
             </div>
             <div className="text-xs text-emerald-200">Low Stock / Expired</div>
           </div>

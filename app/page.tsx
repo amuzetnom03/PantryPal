@@ -151,7 +151,7 @@ export default function Home() {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
 
-  const expiringCount = inventory.filter(i => getDaysUntilExpiry(i.expiryDate) <= 3 && getDaysUntilExpiry(i.expiryDate) >= 0).length;
+  const expiringCount = mounted ? inventory.filter(i => getDaysUntilExpiry(i.expiryDate) <= 3 && getDaysUntilExpiry(i.expiryDate) >= 0).length : 0;
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
